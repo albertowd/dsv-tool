@@ -1,0 +1,34 @@
+.cartridge {
+  max-height: 256px;
+  max-width: 256px;
+}
+
+.cartridge-insert {
+  animation: insertCartridge 2s ease-out forwards 1s;
+}
+
+.cartridge-remove {
+  animation: removeCartridge 2s ease-out forwards 1s;
+}
+
+.cartridge-input {
+  max-width: 128px;
+}
+
+@keyframes insertCartridge {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  100% {
+    transform: translate(0px, 200px);
+  }
+}
+
+@keyframes removeCartridge {
+  0% {
+    transform: translate(0px, 200px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}

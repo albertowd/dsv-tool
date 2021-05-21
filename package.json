@@ -1,0 +1,39 @@
+{
+  "dependencies": {
+    "@nuxtjs/pwa": "^3.3.5",
+    "core-js": "^3.9.1",
+    "nuxt": "^2.15.3",
+    "vuex-module-decorators": "^1.0.1"
+  },
+  "description": "A DSV (DeSmuME/DraStic) converter from/to RAW DS save files.",
+  "devDependencies": {
+    "@nuxt/types": "^2.15.3",
+    "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/eslint-config-typescript": "^6.0.0",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/vuetify": "^1.11.3",
+    "@vue/test-utils": "^1.1.3",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.22.0",
+    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-vue": "^7.7.0",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.4",
+    "vue-jest": "^3.0.4"
+  },
+  "name": "dsv-tools",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "npm run lint:js && npm run lint:ts",
+    "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+    "lint:ts": "eslint --ext \".ts\" --ignore-path .gitignore .",
+    "test": "jest"
+  },
+  "version": "1.0.0"
+}
