@@ -15,7 +15,12 @@
           exact
         >
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <template v-if="item.icon.startsWith('mdi')">
+              <v-icon>{{ item.icon }}</v-icon>
+            </template>
+            <template v-else>
+              <v-img contain width="24" :lazy-src="item.icon.replace('.png', '-thumb.png')" :src="item.icon" />
+            </template>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title v-text="item.title" />
@@ -42,6 +47,8 @@
     >
       <span>&copy; {{ new Date().getFullYear() }}</span>
       <v-spacer />
+      {{ $config.clientVersion }}
+      <v-spacer />
       <v-btn href="https://github.com/albertowd" target="_blank" text>
         github
       </v-btn>
@@ -58,12 +65,12 @@ export default {
       fixed: true,
       items: [
         {
-          icon: 'mdi-nintendo-game-boy',
+          icon: 'img/nintendo-ds-icon.png',
           title: 'Home',
           to: '/'
         },
         {
-          icon: 'mdi-content-save',
+          icon: 'img/cartridge/ds-cartridge-icon.png',
           title: 'Convert',
           to: '/convert'
         },
@@ -71,11 +78,6 @@ export default {
           icon: 'mdi-content-save-all',
           title: 'History',
           to: '/history'
-        },
-        {
-          icon: 'mdi-information',
-          title: 'Info',
-          to: '/info'
         }
       ],
       title: 'DSV Tool'

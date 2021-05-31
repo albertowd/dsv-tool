@@ -1,25 +1,42 @@
 import Vue from 'vue'
 
-import CartridgeCard from '~/components/CartridgeCard/CartridgeCard.vue'
-import Dsv from '~/models/Dsv'
+import SaveCard from '~/components/SaveCard/SaveCard.vue'
+import Sav from '~/models/Sav'
 import { HistoryState } from '~/store/history'
 
 export default Vue.extend({
   components: {
-    CartridgeCard
+    SaveCard
   },
   computed: {
-    dsvs: {
-      get (): Dsv[] {
-        return (this.$store.state.history as HistoryState).dsvs
+    savs: {
+      get (): Sav[] {
+        return (this.$store.state.history as HistoryState).savs
       }
     }
   },
   methods: {
-    addFile (): void {
-      const dsv: Dsv = new Dsv()
-      dsv.name = `added dsv ${(this.$store.state.history as HistoryState).dsvs.length}`
-      this.$store.commit('history/add', new Dsv())
+    clearHistory (): void {
+      this.$store.commit('history/clear')
+    },
+    exportHistory (): void {
+      const a: any = document.createElement('a')
+      a.download = 'dsv-tool.history'
+      a.href = this.$downloadableHistory(this.savs)
+      a.click()
+      a.remove()
+    },
+    importHistory (): void {
+      // Cast to any so the compiler do not show error.
+      (this.$refs.importFileInput as any).$refs.input.click()
+    },
+    importHistoryFile (file: File | null): void {
+      if (file) {
+        file.arrayBuffer().then((arrayBuffer: ArrayBuffer): void => {
+          const historyBuffer: string = Buffer.from(arrayBuffer).toString()
+          this.$store.commit('history/import', historyBuffer)
+        })
+      }
     }
   }
 })

@@ -1,0 +1,10 @@
+version: "3.5"
+
+services:
+  dsv-tool:
+    build: .
+    container_name: dsv-tool
+    hostname: dsv-tool
+    image: dsv-tool:latest
+    ports:
+      - 80:80

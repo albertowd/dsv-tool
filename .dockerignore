@@ -1,0 +1,13 @@
+**
+!assets/
+!components/
+!layouts/
+!middleware/
+!models/
+!pages/
+!plugins/
+!static
+!store
+!nuxt.config.js
+!package*.json
+!tsconfig.json

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <CartridgeCard />
+    <SaveCard />
   </v-container>
 </template>
 
