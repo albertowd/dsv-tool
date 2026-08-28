@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
-import { bufferToDsvInfo, fileToDsv } from '~/plugins/dsv-tools.client'
+import { bufferToDsvInfo, fileToDsv, isDsv } from '~/plugins/dsv-tools.client'
 import { DESMUME_COOKIE, buildDsvBuffer, toFile } from '../helpers/dsv'
 
 describe('bufferToDsvInfo', () => {
@@ -100,11 +100,54 @@ describe('fileToDsv', () => {
     expect(dsv.info.cookie).toBe(DESMUME_COOKIE)
   })
 
-  test('records the failure on the Dsv instead of throwing', async () => {
-    const dsv = await fileToDsv(toFile(new Uint8Array(8), 'broken.dsv'))
+  test('accepts a raw save, leaving the footer fields empty', async () => {
+    // A `.sav` has no footer. That is an supported input, not an error, so the
+    // last 40 bytes must not be read as field values.
+    const sav = new Uint8Array(4096).fill(0xff)
+    const dsv = await fileToDsv(toFile(sav, 'pokemon.sav'))
+
+    expect(dsv.error).toBeNull()
+    expect(dsv.info.cookie).toBe('')
+    expect(dsv.info.paddedSize).toBe(0)
+    expect(dsv.size).toBe(4096)
+  })
+
+  test('records the failure when a DSV footer is present but unreadable', async () => {
+    const bytes = buildDsvBuffer({ header: 'H', paddedSize: 32 })
+    // Keep the cookie, but claim a payload far larger than the file.
+    new DataView(bytes.buffer).setUint32(bytes.length - 40 + 4, 0xffffffff, true)
+
+    const dsv = await fileToDsv(toFile(bytes, 'broken.dsv'))
 
     expect(dsv.error).toBeInstanceOf(Error)
-    expect(dsv.error?.message).toMatch(/too small/)
+    expect(dsv.error?.message).toMatch(/Corrupted DSV buffer information/)
     expect(dsv.name).toBe('broken.dsv')
+  })
+})
+
+describe('isDsv', () => {
+  test('recognises a DSV by its trailing cookie', () => {
+    expect(isDsv(buildDsvBuffer())).toBe(true)
+    expect(isDsv(buildDsvBuffer({ header: '', paddedSize: 512 }))).toBe(true)
+  })
+
+  test('rejects a raw save', () => {
+    expect(isDsv(new Uint8Array(524_288))).toBe(false)
+  })
+
+  test('rejects a buffer shorter than a footer', () => {
+    expect(isDsv(new Uint8Array(8))).toBe(false)
+  })
+})
+
+describe('bufferToDsvInfo header region', () => {
+  test('accepts a DSV with no header region', () => {
+    // The footer sits directly after the save data, so file length is exactly
+    // paddedSize + 40. This is the ordinary case, not a corrupt file.
+    const info = bufferToDsvInfo(buildDsvBuffer({ header: '', paddedSize: 512 }))
+
+    expect(info.paddedSize).toBe(512)
+    expect(info.header).toBe('')
+    expect(info.cookie).toBe(DESMUME_COOKIE)
   })
 })

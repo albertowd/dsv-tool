@@ -3,8 +3,14 @@
     <v-card-title>
       {{ dsv.name }}
     </v-card-title>
-    <v-card-subtitle>{{ dsv.size }} kb - {{ new Date(dsv.lastModified).toLocaleString() }}</v-card-subtitle>
-    <v-card-text>
+    <v-card-subtitle>{{ (dsv.size / 1024).toFixed(1) }} kb - {{ new Date(dsv.lastModified).toLocaleString() }}</v-card-subtitle>
+    <v-card-text v-if="!hasFooter">
+      <v-chip class="mb-2" size="small">
+        Raw DS save
+      </v-chip>
+      <p>No DSV footer. Export as <strong>.DSV</strong> to add one.</p>
+    </v-card-text>
+    <v-card-text v-else>
       <h6>
         Actually Written Size: <span>{{ dsv.info.actuallyWrittenSize / 1024.0 }} kb</span>
       </h6>

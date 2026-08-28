@@ -2,6 +2,11 @@ import Dsv from '~/models/Dsv'
 import DsvInfo from '~/models/DsvInfo'
 
 /**
+ * Trailer DeSmuME and DraStic write at the very end of a DSV file.
+ */
+export const DESMUME_COOKIE: string = '|-DESMUME SAVE-|'
+
+/**
  * DSV Footer payload byte indexes.
  */
 const ACTUALLY_WRITTEN_SIZE_INDEX: number = 0
@@ -64,7 +69,10 @@ export function bufferToDsvInfo (bytes: Uint8Array): DsvInfo {
     info.saveType = view.getUint32(payloadIndex + SAVE_TYPE_INDEX, true)
     info.versionNumber = view.getUint32(payloadIndex + VERSION_NUMBER_INDEX, true)
 
-    if (bytes.length > info.paddedSize + DSV_FOOTER_LENGTH) {
+    // The footer is appended straight after the save data, so most files have
+    // no header region at all and `paddedSize + DSV_FOOTER_LENGTH` is exactly
+    // the file length. Anything longer carries a header between the two.
+    if (bytes.length >= info.paddedSize + DSV_FOOTER_LENGTH) {
       info.header = readAscii(bytes, info.paddedSize, payloadIndex)
     } else {
       const msg: string = `buffer size (${bytes.length}) < info.paddedSize (${info.paddedSize}) + DSV_FOOTER_LENGTH (${DSV_FOOTER_LENGTH})`
@@ -78,9 +86,11 @@ export function bufferToDsvInfo (bytes: Uint8Array): DsvInfo {
 }
 
 /**
- * Reads a picked file into a Dsv model.
+ * Reads a picked file into a Dsv model. Accepts both a DSV and a raw save;
+ * only the former carries footer information.
  * @param file File to read.
- * @returns the parsed Dsv, carrying an `error` when the content is not valid.
+ * @returns the parsed Dsv, carrying an `error` when a DSV footer is present
+ *          but unreadable.
  */
 export async function fileToDsv (file: File): Promise<Dsv> {
   const dsv: Dsv = new Dsv()
@@ -91,7 +101,12 @@ export async function fileToDsv (file: File): Promise<Dsv> {
   try {
     const bytes: Uint8Array = new Uint8Array(await file.arrayBuffer())
     dsv.base64 = toBase64(bytes)
-    dsv.info = bufferToDsvInfo(bytes)
+    // A raw `.sav` is a supported input, not a failure. Only read a footer
+    // when the cookie says there is one; otherwise the last 40 bytes of save
+    // data would be parsed as garbage field values.
+    if (isDsv(bytes)) {
+      dsv.info = bufferToDsvInfo(bytes)
+    }
   } catch (cause) {
     const error: Error = cause instanceof Error ? cause : new Error(String(cause))
     dsv.error = error
@@ -102,11 +117,25 @@ export async function fileToDsv (file: File): Promise<Dsv> {
   return dsv
 }
 
+/**
+ * Tells a DSV apart from a raw save by its trailing cookie.
+ * @param bytes Bytes to inspect.
+ * @returns whether the bytes end with a DeSmuME footer.
+ */
+export function isDsv (bytes: Uint8Array): boolean {
+  if (bytes.length < DSV_FOOTER_LENGTH) {
+    return false
+  }
+  const start: number = bytes.length - DSV_FOOTER_LENGTH + COOKIE_INDEX
+  return readAscii(bytes, start, bytes.length) === DESMUME_COOKIE
+}
+
 export default defineNuxtPlugin(() => {
   return {
     provide: {
       bufferToDsvInfo,
-      fileToDsv
+      fileToDsv,
+      isDsv
     }
   }
 })

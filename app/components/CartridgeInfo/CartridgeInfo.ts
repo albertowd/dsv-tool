@@ -20,6 +20,10 @@ export default defineComponent({
   computed: {
     dsv (): Dsv | undefined {
       return this.dsvIndex < 0 ? this.current.dsv : this.history.dsvs[this.dsvIndex]
+    },
+    /** Only a DSV carries the footer, and only then is there anything to show. */
+    hasFooter (): boolean {
+      return (this.dsv?.info.cookie.length ?? 0) > 0
     }
   }
 })
