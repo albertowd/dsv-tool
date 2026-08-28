@@ -13,7 +13,7 @@
   "devDependencies": {
     "@nuxt/eslint": "^1",
     "@nuxt/test-utils": "^4",
-    "@types/node": "^26",
+    "@types/node": "^24",
     "@vite-pwa/assets-generator": "^1",
     "@vite-pwa/nuxt": "^1",
     "@vitest/coverage-v8": "^4",
@@ -25,6 +25,9 @@
     "vite-plugin-vuetify": "^2",
     "vitest": "^4",
     "vue-tsc": "^3"
+  },
+  "engines": {
+    "node": "^24"
   },
   "name": "dsv-tools",
   "private": true,
