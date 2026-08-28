@@ -89,7 +89,7 @@ describe('fileToDsv', () => {
     const bytes = buildDsvBuffer({ paddedSize: 0x8000 * 2 + 5 })
     const dsv = await fileToDsv(toFile(bytes))
 
-    expect(atob(dsv.base64).length).toBe(bytes.length)
+    expect(atob(dsv.base64)).toHaveLength(bytes.length)
   })
 
   test('parses the footer into info', async () => {

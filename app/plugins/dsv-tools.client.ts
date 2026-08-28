@@ -24,14 +24,14 @@ const VERSION_NUMBER_INDEX: number = 20
 function readAscii (bytes: Uint8Array, start: number, end: number): string {
   let text: string = ''
   for (let i = start; i < end; i++) {
-    text += String.fromCharCode((bytes[i] ?? 0) & 0x7f)
+    text += String.fromCodePoint((bytes[i] ?? 0) & 0x7f)
   }
   return text
 }
 
 /**
  * Encodes bytes as base64, chunked to stay clear of the argument limit of
- * `String.fromCharCode`.
+ * `String.fromCodePoint`.
  * @param bytes Bytes to encode.
  * @returns the base64 representation.
  */
@@ -39,7 +39,7 @@ function toBase64 (bytes: Uint8Array): string {
   const CHUNK_LENGTH: number = 0x8000
   let binary: string = ''
   for (let i = 0; i < bytes.length; i += CHUNK_LENGTH) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK_LENGTH))
+    binary += String.fromCodePoint(...bytes.subarray(i, i + CHUNK_LENGTH))
   }
   return btoa(binary)
 }
