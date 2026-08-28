@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 
 import CartridgeCard from '~/components/CartridgeCard/CartridgeCard.vue'
-import Dsv from '~/models/Dsv'
+import type Dsv from '~/models/Dsv'
 import { useHistoryStore } from '~/stores/history'
 
 export default defineComponent({
@@ -19,10 +19,8 @@ export default defineComponent({
     }
   },
   methods: {
-    addFile (): void {
-      const dsv: Dsv = new Dsv()
-      dsv.name = `added dsv ${this.history.dsvs.length}`
-      this.history.add(dsv)
+    clear (): void {
+      this.history.clear()
     }
   }
 })

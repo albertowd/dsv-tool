@@ -7,9 +7,16 @@ import HistoryPage from '~/pages/history/index.vue'
 import { useCurrentStore } from '~/stores/current'
 import { useHistoryStore } from '~/stores/history'
 
-interface HistoryPageVm {
-  addFile: () => void
-  dsvs: Dsv[]
+/**
+ * Builds a Dsv that counts as loaded.
+ * @param name File name.
+ * @returns the Dsv.
+ */
+function named (name: string): Dsv {
+  const dsv = new Dsv()
+  dsv.name = name
+  dsv.size = 1024
+  return dsv
 }
 
 describe('history page', () => {
@@ -18,20 +25,17 @@ describe('history page', () => {
     useHistoryStore().clear()
   })
 
-  test('renders no cards while the history is empty', async () => {
+  test('explains itself while the history is empty', async () => {
     const wrapper = await mountSuspended(HistoryPage)
 
     expect(wrapper.findAllComponents(CartridgeCard)).toHaveLength(0)
+    expect(wrapper.text()).toContain('No saves loaded yet')
   })
 
-  test('renders one card per stored Dsv, indexed in order', async () => {
+  test('renders one card per stored save, indexed in order', async () => {
     const history = useHistoryStore()
-    const first = new Dsv()
-    first.name = 'first.dsv'
-    const second = new Dsv()
-    second.name = 'second.dsv'
-    history.add(first)
-    history.add(second)
+    history.add(named('first.dsv'))
+    history.add(named('second.dsv'))
 
     const wrapper = await mountSuspended(HistoryPage)
     const cards = wrapper.findAllComponents(CartridgeCard)
@@ -42,23 +46,33 @@ describe('history page', () => {
     expect(wrapper.text()).toContain('second.dsv')
   })
 
-  test('addFile stores the Dsv it just named', async () => {
+  test('never renders the encoded payload', async () => {
+    // A 512 KB save is ~700k base64 characters; putting that in the DOM would
+    // lock the page up.
+    const dsv = named('big.dsv')
+    dsv.base64 = 'QUJDREVGR0hJSktMTU5PUA=='
+    useHistoryStore().add(dsv)
+
     const wrapper = await mountSuspended(HistoryPage)
 
-    ;(wrapper.vm as unknown as HistoryPageVm).addFile()
-
-    expect(useHistoryStore().dsvs.map((dsv: Dsv): string => dsv.name)).toEqual(['added dsv 0'])
+    expect(wrapper.text()).not.toContain(dsv.base64)
   })
 
-  test('addFile numbers each new entry from the current length', async () => {
+  test('clear empties the history', async () => {
+    const history = useHistoryStore()
+    history.add(named('first.dsv'))
+
     const wrapper = await mountSuspended(HistoryPage)
-    const vm = wrapper.vm as unknown as HistoryPageVm
+    const clear = wrapper.findAll('button').find((b): boolean => b.text().includes('Clear'))
+    await clear!.trigger('click')
 
-    vm.addFile()
-    vm.addFile()
-    vm.addFile()
+    expect(history.dsvs).toEqual([])
+  })
 
-    expect(useHistoryStore().dsvs.map((dsv: Dsv): string => dsv.name))
-      .toEqual(['added dsv 0', 'added dsv 1', 'added dsv 2'])
+  test('disables clear while there is nothing to clear', async () => {
+    const wrapper = await mountSuspended(HistoryPage)
+    const clear = wrapper.findAll('button').find((b): boolean => b.text().includes('Clear'))
+
+    expect(clear!.attributes('disabled')).toBeDefined()
   })
 })

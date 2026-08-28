@@ -48,6 +48,11 @@ export default defineComponent({
         this.$fileToDsv(file)
           .then((dsv: Dsv): void => {
             this.current.update(dsv)
+            // Cards rendered from the history are read-only views of an entry
+            // that is already stored; only the converter adds to it.
+            if (this.dsvIndex < 0) {
+              this.history.add(dsv)
+            }
           })
       }
     },

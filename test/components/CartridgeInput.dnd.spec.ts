@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import CartridgeInput from '~/components/CartridgeInput/CartridgeInput.vue'
+import Dsv from '~/models/Dsv'
 import { useCurrentStore } from '~/stores/current'
 import { useHistoryStore } from '~/stores/history'
 import { buildDsvBuffer, toFile } from '../helpers/dsv'
@@ -45,6 +46,7 @@ describe('CartridgeInput drag and drop', () => {
     await vi.waitFor(() => {
       expect(useCurrentStore().dsv.name).toBe('first.dsv')
     })
+    expect(useHistoryStore().dsvs).toHaveLength(1)
   })
 
   test('ignores a drop carrying no file', async () => {
@@ -53,6 +55,7 @@ describe('CartridgeInput drag and drop', () => {
     drop(wrapper.element, [])
 
     expect(useCurrentStore().dsv.name).toBe('-')
+    expect(useHistoryStore().dsvs).toEqual([])
   })
 
   test('highlights the cartridge while a file is dragged over it', async () => {
@@ -76,3 +79,40 @@ describe('CartridgeInput drag and drop', () => {
   })
 })
 
+describe('CartridgeInput history', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    useCurrentStore().clear()
+    useHistoryStore().clear()
+  })
+
+  test('records every loaded save in the history', async () => {
+    const wrapper = await mountSuspended(CartridgeInput)
+    const vm = wrapper.vm as unknown as { changeCurrentDsv: (f: File) => void }
+
+    vm.changeCurrentDsv(toFile(buildDsvBuffer(), 'first.dsv'))
+    await vi.waitFor(() => expect(useHistoryStore().dsvs).toHaveLength(1))
+
+    vm.changeCurrentDsv(toFile(buildDsvBuffer(), 'second.dsv'))
+    await vi.waitFor(() => expect(useHistoryStore().dsvs).toHaveLength(2))
+
+    expect(useHistoryStore().dsvs.map((d: Dsv): string => d.name))
+      .toEqual(['first.dsv', 'second.dsv'])
+  })
+
+  test('a card bound to the history does not re-add its own entry', async () => {
+    const history = useHistoryStore()
+    const existing = new Dsv()
+    existing.name = 'stored.dsv'
+    history.add(existing)
+
+    const wrapper = await mountSuspended(CartridgeInput, { props: { dsvIndex: 0 } })
+    const vm = wrapper.vm as unknown as { changeCurrentDsv: (f: File) => void }
+    vm.changeCurrentDsv(toFile(buildDsvBuffer(), 'replacement.dsv'))
+
+    await vi.waitFor(() => {
+      expect(useCurrentStore().dsv.name).toBe('replacement.dsv')
+    })
+    expect(history.dsvs).toHaveLength(1)
+  })
+})
