@@ -1,0 +1,9 @@
+// Ref: https://vuetifyjs.com/en/features/sass-variables/
+//
+// The variables you want to modify.
+@use 'vuetify/settings' with (
+  $font-size-root: 1rem,
+  // Vuetify 4 defaults buttons to sentence case; the app's Vuetify 2 look
+  // used the uppercase labels.
+  $button-text-transform: uppercase
+);
