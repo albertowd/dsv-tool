@@ -49,7 +49,7 @@ function toBase64 (bytes: Uint8Array): string {
  * @param bytes Bytes of the DSV file.
  * @returns a DsvInfo object about the DSV file.
  */
-function bufferToDsvInfo (bytes: Uint8Array): DsvInfo {
+export function bufferToDsvInfo (bytes: Uint8Array): DsvInfo {
   const info: DsvInfo = new DsvInfo()
 
   const payloadIndex: number = bytes.length - DSV_FOOTER_LENGTH
@@ -82,7 +82,7 @@ function bufferToDsvInfo (bytes: Uint8Array): DsvInfo {
  * @param file File to read.
  * @returns the parsed Dsv, carrying an `error` when the content is not valid.
  */
-async function fileToDsv (file: File): Promise<Dsv> {
+export async function fileToDsv (file: File): Promise<Dsv> {
   const dsv: Dsv = new Dsv()
   dsv.name = file.name
   dsv.lastModified = file.lastModified

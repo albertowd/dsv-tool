@@ -14,8 +14,9 @@
     "@nuxt/eslint": "^1",
     "@nuxt/test-utils": "^4",
     "@types/node": "^26",
-    "@vite-pwa/assets-generator": "^1.0.2",
+    "@vite-pwa/assets-generator": "^1",
     "@vite-pwa/nuxt": "^1",
+    "@vitest/coverage-v8": "^4",
     "@vue/test-utils": "^2",
     "eslint": "^10",
     "happy-dom": "^20",
@@ -36,6 +37,7 @@
     "postinstall": "nuxt prepare",
     "start": "nuxt preview",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "nuxt typecheck"
   },
   "type": "module",
