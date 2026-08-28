@@ -44,24 +44,25 @@ each other's emulator.
 
 ## Features
 
+- **Converts both ways.** Export a `.dsv` as a raw `.sav` with the footer
+  stripped, or a `.sav` as a `.dsv` with a DeSmuME footer appended. Converting
+  a save and converting it back returns the original bytes.
 - **Runs entirely in your browser.** Saves are read with the File API and never
   leave your machine — there is no server to upload them to.
 - **Reads the DSV footer.** Save type, address bus size, padding, written size
   and cookie, decoded from the bytes.
-- **Pick a `.dsv` or `.sav`** from the cartridge and see it parsed immediately.
+- **Drop a save on the cartridge**, or click it to pick a `.dsv` / `.sav`.
+- **Session history** of everything loaded, each entry re-exportable.
 - **Installable.** Ships a web app manifest and service worker, so it works
   offline once loaded.
 
-> [!WARNING]
-> **Status: work in progress.** Loading a save and reading its footer works.
-> These do not, yet:
->
-> - The `.DSV` / `.SAV` buttons on the cartridge card are placeholders — the
->   conversion and download path is not implemented.
-> - Loading a save does not add it to the history; `/history` is only fed by
->   its own *Add File* button.
-> - `FileDrop`, the drag-and-drop component, is written and tested but not
->   mounted on any page.
+> [!NOTE]
+> History lives in memory for the session — reloading the page clears it.
+> Conversion is byte-exact and covered by tests, including a round trip of the
+> 512 KB sample save in `app/assets`, but the generated footer has not been
+> checked against DeSmuME itself. When a save came from a `.dsv`, its original
+> save type and bus width are carried across; for a raw `.sav` those fields are
+> derived from the file length.
 
 ## Getting started
 
@@ -87,8 +88,8 @@ npm run dev          # http://localhost:3000
 
 ## Testing
 
-57 tests across the models, Pinia stores, the DSV parser and the components,
-run with [Vitest](https://vitest.dev) in a Nuxt environment.
+85 tests across the models, Pinia stores, the DSV parser and converter, and
+the components, run with [Vitest](https://vitest.dev) in a Nuxt environment.
 
 ```bash
 npm test
@@ -97,7 +98,8 @@ npm run test:coverage
 
 The parser tests build synthetic DSV buffers, giving every footer field a
 distinct value so a mis-indexed read fails loudly instead of quietly matching a
-neighbouring field.
+neighbouring field. The converter is checked by round trip — `sav -> dsv -> sav`
+must return the original bytes, including for the real save in `app/assets`.
 
 ## Code quality
 
@@ -142,7 +144,7 @@ NUXT_APP_BASE_URL=/dsv-tool/ npm run generate
 ```
 app/
   assets/        Cartridge artwork and Vuetify SASS variables
-  components/    CartridgeCard, CartridgeInfo, CartridgeInput, FileDrop
+  components/    CartridgeCard, CartridgeInfo, CartridgeInput
   layouts/       App shell: nav drawer, app bar, footer
   models/        Dsv and DsvInfo
   pages/         /, /convert, /history
