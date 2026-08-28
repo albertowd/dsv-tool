@@ -118,6 +118,20 @@ export async function fileToDsv (file: File): Promise<Dsv> {
 }
 
 /**
+ * Decodes a base64 payload back into bytes.
+ * @param base64 Base64 to decode.
+ * @returns the decoded bytes.
+ */
+export function fromBase64 (base64: string): Uint8Array {
+  const binary: string = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+  return bytes
+}
+
+/**
  * Tells a DSV apart from a raw save by its trailing cookie.
  * @param bytes Bytes to inspect.
  * @returns whether the bytes end with a DeSmuME footer.
@@ -130,12 +144,87 @@ export function isDsv (bytes: Uint8Array): boolean {
   return readAscii(bytes, start, bytes.length) === DESMUME_COOKIE
 }
 
+/**
+ * Strips the DSV footer, leaving the raw save a cartridge would hold.
+ * @param bytes Bytes of a DSV file.
+ * @returns the raw save bytes.
+ */
+export function dsvToSav (bytes: Uint8Array): Uint8Array {
+  const info: DsvInfo = bufferToDsvInfo(bytes)
+  return bytes.slice(0, info.paddedSize)
+}
+
+/**
+ * Appends a DeSmuME footer to raw save data.
+ * @param bytes Bytes of a raw save file.
+ * @param info Footer values to preserve. Supplied when the save came from a
+ *             DSV in the first place, so a round trip keeps the emulator's
+ *             own save type and bus width; otherwise they are derived from
+ *             the save length.
+ * @returns the DSV bytes.
+ */
+export function savToDsv (bytes: Uint8Array, info?: DsvInfo): Uint8Array {
+  const dsv = new Uint8Array(bytes.length + DSV_FOOTER_LENGTH)
+  dsv.set(bytes)
+
+  // A raw save carries an all-zero DsvInfo rather than none at all, so the
+  // size fields fall back on 0 as well as on a missing info.
+  const sized = (value: number | undefined): number => (value ?? 0) > 0 ? value! : bytes.length
+
+  const footer: number = bytes.length
+  const view: DataView = new DataView(dsv.buffer)
+  view.setUint32(footer + ACTUALLY_WRITTEN_SIZE_INDEX, sized(info?.actuallyWrittenSize), true)
+  // `paddedSize` is where the reader slices, so it must match this payload
+  // rather than whatever the original file said.
+  view.setUint32(footer + PADDED_SIZE_INDEX, bytes.length, true)
+  view.setUint32(footer + SAVE_TYPE_INDEX, info?.saveType ?? 0, true)
+  view.setUint32(footer + ADDRESS_SIZE_INDEX, info?.addressSize ?? 0, true)
+  view.setUint32(footer + SAVE_SIZE_INDEX, sized(info?.saveSize), true)
+  view.setUint32(footer + VERSION_NUMBER_INDEX, info?.versionNumber ?? 0, true)
+  for (let i = 0; i < DESMUME_COOKIE.length; i++) {
+    dsv[footer + COOKIE_INDEX + i] = DESMUME_COOKIE.charCodeAt(i)
+  }
+
+  return dsv
+}
+
+/**
+ * Swaps a file name's extension.
+ * @param name Original file name.
+ * @param extension Extension to end up with, without the dot.
+ * @returns the renamed file.
+ */
+export function renameExtension (name: string, extension: string): string {
+  return `${name.replace(/\.[^.]*$/, '')}.${extension}`
+}
+
+/**
+ * Hands bytes to the browser as a download.
+ * @param name File name to save as.
+ * @param bytes Content of the file.
+ */
+export function downloadBytes (name: string, bytes: Uint8Array): void {
+  const url: string = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'application/octet-stream' }))
+  const link: HTMLAnchorElement = document.createElement('a')
+  link.href = url
+  link.download = name
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
 export default defineNuxtPlugin(() => {
   return {
     provide: {
       bufferToDsvInfo,
+      downloadBytes,
+      dsvToSav,
       fileToDsv,
-      isDsv
+      fromBase64,
+      isDsv,
+      renameExtension,
+      savToDsv
     }
   }
 })

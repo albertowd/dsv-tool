@@ -53,3 +53,10 @@ if (!('IntersectionObserver' in window)) {
     }
   } as unknown as typeof IntersectionObserver
 }
+
+// happy-dom has no object-URL support, and the download path builds one.
+// Defined rather than mocked so tests can spy on it.
+if (typeof URL.createObjectURL !== 'function') {
+  URL.createObjectURL = (): string => 'blob:stub'
+  URL.revokeObjectURL = (): void => {}
+}
