@@ -11,7 +11,7 @@
         <v-img
           alt=""
           class="mx-auto mb-6"
-          src="/icon.png"
+          :src="iconSrc"
           :width="180"
         />
         <h1 class="d-sr-only">
@@ -73,6 +73,10 @@
 </template>
 
 <script setup lang="ts">
+// Public assets sit under the deployment's base path, which is `/` locally
+// and `/<repo>/` on GitHub Pages.
+const iconSrc = `${useRuntimeConfig().app.baseURL}icon.png`
+
 const features = [
   {
     icon: 'mdi-shield-lock-outline',

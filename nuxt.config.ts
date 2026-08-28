@@ -1,5 +1,10 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
+// GitHub Pages serves a project site from `/<repo>/`, not from the domain
+// root, so every absolute asset path has to carry that prefix. The deploy
+// workflow sets NUXT_APP_BASE_URL; locally it stays `/`.
+const baseURL: string = (process.env.NUXT_APP_BASE_URL || '/').replace(/\/?$/, '/')
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2026-08-28',
@@ -8,6 +13,8 @@ export default defineNuxtConfig({
   ssr: false,
 
   app: {
+    baseURL,
+
     head: {
       titleTemplate: '%s - DSV Tool',
       title: 'DSVTool',
@@ -22,8 +29,8 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-title', content: 'DSVTool' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'apple-touch-icon', href: '/apple-touch-icon-180x180.png', sizes: '180x180' }
+        { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico` },
+        { rel: 'apple-touch-icon', href: `${baseURL}apple-touch-icon-180x180.png`, sizes: '180x180' }
       ]
     }
   },
