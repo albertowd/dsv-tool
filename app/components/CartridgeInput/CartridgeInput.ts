@@ -26,6 +26,7 @@ export default defineComponent({
   },
   data () {
     return {
+      dragging: false,
       file: null as File | null
     }
   },
@@ -48,6 +49,18 @@ export default defineComponent({
           .then((dsv: Dsv): void => {
             this.current.update(dsv)
           })
+      }
+    },
+    /**
+     * Loads the first file dropped onto the cartridge.
+     * @param event Drop event carrying the files.
+     */
+    dropDsv (event: DragEvent): void {
+      this.dragging = false
+      const dropped: File | undefined = event.dataTransfer?.files?.[0]
+      if (dropped) {
+        this.file = dropped
+        this.changeCurrentDsv(dropped)
       }
     }
   }

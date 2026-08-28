@@ -1,5 +1,13 @@
 <template>
-  <v-card class="cartridge mx-auto" flat>
+  <v-card
+    class="cartridge mx-auto"
+    flat
+    :class="{ 'cartridge-dragging': dragging }"
+    @dragenter.prevent="dragging = true"
+    @dragover.prevent
+    @dragleave.prevent="dragging = false"
+    @drop.prevent="dropDsv"
+  >
     <v-img
       contain
       class="cartridge-img"
