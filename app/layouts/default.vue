@@ -52,11 +52,6 @@ const items = [
     icon: 'mdi-content-save-all',
     title: 'History',
     to: '/history'
-  },
-  {
-    icon: 'mdi-information',
-    title: 'Info',
-    to: '/info'
   }
 ]
 </script>
