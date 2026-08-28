@@ -14,7 +14,7 @@ export const useHistoryStore = defineStore('history', {
       this.dsvs = []
     },
     remove (dsv: Dsv): void {
-      this.dsvs = this.dsvs.filter((stored: Dsv) => dsv.id === stored.id)
+      this.dsvs = this.dsvs.filter((stored: Dsv) => dsv.id !== stored.id)
     }
   }
 })

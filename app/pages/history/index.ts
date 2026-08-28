@@ -22,7 +22,7 @@ export default defineComponent({
     addFile (): void {
       const dsv: Dsv = new Dsv()
       dsv.name = `added dsv ${this.history.dsvs.length}`
-      this.history.add(new Dsv())
+      this.history.add(dsv)
     }
   }
 })
