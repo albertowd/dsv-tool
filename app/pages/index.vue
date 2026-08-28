@@ -1,81 +1,100 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
+  <v-row justify="center">
+    <v-col
+      cols="12"
+      sm="10"
+      md="8"
+    >
       <div class="text-center">
-        <logo />
-        <vuetify-logo />
+        <!-- The icon carries the wordmark, so the heading is for assistive
+             tech only and the image is decorative. -->
+        <v-img
+          alt=""
+          class="mx-auto mb-6"
+          src="/icon.png"
+          :width="180"
+        />
+        <h1 class="d-sr-only">
+          DSV Tool
+        </h1>
+        <p class="text-h6 text-medium-emphasis mb-8">
+          A DSV (DeSmuME/DraStic) converter from/to RAW DS save files.
+        </p>
       </div>
-      <v-card>
-        <v-card-title class="text-h5">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
+
+      <v-row class="mb-4">
+        <v-col
+          v-for="feature in features"
+          :key="feature.title"
+          cols="12"
+          md="4"
+        >
+          <v-card
+            class="fill-height text-center"
+            variant="tonal"
           >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+            <v-card-item>
+              <v-icon
+                class="mb-2"
+                :icon="feature.icon"
+                size="32"
+              />
+              <v-card-title class="feature-title text-subtitle-1">
+                {{ feature.title }}
+              </v-card-title>
+            </v-card-item>
+            <v-card-text>{{ feature.text }}</v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <div class="text-center">
+        <v-btn
+          class="ma-2"
+          color="primary"
+          prepend-icon="mdi-content-save"
+          size="large"
+          to="/convert"
+        >
+          Convert a save
+        </v-btn>
+        <v-btn
+          class="ma-2"
+          prepend-icon="mdi-content-save-all"
+          size="large"
+          to="/history"
+          variant="text"
+        >
+          History
+        </v-btn>
+      </div>
     </v-col>
   </v-row>
 </template>
 
 <script setup lang="ts">
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+const features = [
+  {
+    icon: 'mdi-shield-lock-outline',
+    title: 'Stays on your device',
+    text: 'Saves are read in the browser. Nothing is uploaded to a server.'
+  },
+  {
+    icon: 'mdi-file-search-outline',
+    title: 'Inspect the footer',
+    text: 'Read the DSV footer: save type, address bus size, padding and cookie.'
+  },
+  {
+    icon: 'mdi-history',
+    title: 'Keep a history',
+    text: 'Loaded saves stay in a session history so you can revisit them.'
+  }
+]
 </script>
+
+<style scoped>
+/* `v-card-title` is nowrap + ellipsis by default, which clips these headings. */
+.feature-title {
+  white-space: normal;
+}
+</style>
