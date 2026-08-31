@@ -14,12 +14,15 @@ export default defineVitestConfig({
     coverage: {
       // `lcov` is what the SonarQube scanner reads; see sonar-project.properties.
       reporter: ['text', 'lcov'],
+      // Extensions spelled out: a bare `**` also matches the scaffold's
+      // `README.md` in each of these directories, which the coverage provider
+      // then tries to parse as JavaScript and complains about.
       include: [
-        'app/components/**',
-        'app/models/**',
-        'app/pages/**',
-        'app/plugins/**',
-        'app/stores/**'
+        'app/components/**/*.{ts,vue}',
+        'app/models/**/*.ts',
+        'app/pages/**/*.{ts,vue}',
+        'app/plugins/**/*.ts',
+        'app/stores/**/*.ts'
       ]
     }
   }

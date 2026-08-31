@@ -126,7 +126,8 @@ export function fromBase64 (base64: string): Uint8Array {
   const binary: string = atob(base64)
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i)
+    // `atob` yields one character per byte, so the code point is the byte.
+    bytes[i] = binary.codePointAt(i) ?? 0
   }
   return bytes
 }
@@ -182,7 +183,7 @@ export function savToDsv (bytes: Uint8Array, info?: DsvInfo): Uint8Array {
   view.setUint32(footer + SAVE_SIZE_INDEX, sized(info?.saveSize), true)
   view.setUint32(footer + VERSION_NUMBER_INDEX, info?.versionNumber ?? 0, true)
   for (let i = 0; i < DESMUME_COOKIE.length; i++) {
-    dsv[footer + COOKIE_INDEX + i] = DESMUME_COOKIE.charCodeAt(i)
+    dsv[footer + COOKIE_INDEX + i] = DESMUME_COOKIE.codePointAt(i) ?? 0
   }
 
   return dsv
