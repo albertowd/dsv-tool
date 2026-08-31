@@ -25,7 +25,7 @@ describe('home page', () => {
     const text = wrapper.text()
 
     expect(text).toContain('Stays on your device')
-    expect(text).toContain('Inspect the footer')
+    expect(text).toContain('Import and export')
     expect(text).toContain('Keep a history')
   })
 

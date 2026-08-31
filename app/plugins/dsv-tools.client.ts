@@ -189,6 +189,32 @@ export function savToDsv (bytes: Uint8Array, info?: DsvInfo): Uint8Array {
 }
 
 /**
+ * The two shapes a save is written in: with a DeSmuME footer, or the raw
+ * bytes a cartridge holds.
+ */
+export type SaveFormat = 'dsv' | 'sav'
+
+/**
+ * Converts a save to the requested format, leaving it alone when it is
+ * already in it.
+ *
+ * The rule is the same wherever a save is written out - one card or a whole
+ * folder - so it lives here rather than in each caller.
+ * @param bytes Bytes as they were loaded.
+ * @param format Format to end up in.
+ * @param info Footer to reuse when adding one; the emulator's own values are
+ *   kept where the save came from a DSV.
+ * @returns the converted bytes.
+ */
+export function toSaveFormat (bytes: Uint8Array, format: SaveFormat, info?: DsvInfo): Uint8Array {
+  const carriesFooter: boolean = isDsv(bytes)
+  if (format === 'dsv') {
+    return carriesFooter ? bytes : savToDsv(bytes, info)
+  }
+  return carriesFooter ? dsvToSav(bytes) : bytes
+}
+
+/**
  * Swaps a file name's extension.
  * @param name Original file name.
  * @param extension Extension to end up with, without the dot.
@@ -224,7 +250,8 @@ export default defineNuxtPlugin(() => {
       fromBase64,
       isDsv,
       renameExtension,
-      savToDsv
+      savToDsv,
+      toSaveFormat
     }
   }
 })

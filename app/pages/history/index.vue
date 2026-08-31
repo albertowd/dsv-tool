@@ -5,8 +5,10 @@
         History
       </h1>
       <v-spacer />
+      <ImportSaves />
+      <ExportSaves />
       <v-btn
-        prepend-icon="mdi-delete-sweep"
+        :prepend-icon="mdiDeleteSweep"
         variant="text"
         :disabled="dsvs.length === 0"
         @click="clear"
@@ -17,12 +19,13 @@
 
     <v-alert
       v-if="dsvs.length === 0"
-      icon="mdi-information"
+      :icon="mdiInformation"
       type="info"
       variant="tonal"
     >
       No saves loaded yet. Open <NuxtLink to="/convert">Convert</NuxtLink> and pick a
-      <code>.dsv</code> or <code>.sav</code> file.
+      <code>.dsv</code> or <code>.sav</code> file, or <strong>Import</strong> a folder,
+      memory card or drive to scan it for saves.
     </v-alert>
 
     <CartridgeCard

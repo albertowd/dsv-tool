@@ -84,9 +84,9 @@ const features = [
     text: 'Saves are read in the browser. Nothing is uploaded to a server.'
   },
   {
-    icon: 'mdi-file-search-outline',
-    title: 'Inspect the footer',
-    text: 'Read the DSV footer: save type, address bus size, padding and cookie.'
+    icon: 'mdi-usb-flash-drive',
+    title: 'Import and export',
+    text: 'Scan a folder, memory card or drive for saves, and write them back as .DSV or .SAV.'
   },
   {
     icon: 'mdi-history',

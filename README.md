@@ -136,23 +136,88 @@ is needed for development.
 NUXT_APP_BASE_URL=/dsv-tool/ npm run generate
 ```
 
+## Performance and indexing
+
+Lighthouse scores 100 for accessibility, best practices and SEO on every route,
+100 for performance on desktop and about 94 on mobile.
+
+Two things carry most of that. Icons are SVG paths from `@mdi/js` rather than
+the MDI webfont, which was 418 kb of stylesheet and a 403 kb woff2 to draw the
+sixteen icons this app uses. And because the app renders on the client, the
+document would otherwise paint nothing until Vue had booted - 87% of the mobile
+LCP was that wait - so `app/spa-loading-template.html` paints the same artwork,
+at the same size and place, straight from the HTML.
+
+What remains on mobile is HTTP cache headers, which the local `npx serve` does
+not send. Everything under `_nuxt/` is content hashed and safe to serve
+`immutable`, so a real host should score higher than the numbers above.
+
+`public/robots.txt` allows crawling but disallows `/icons/`: those 4844 files
+are 99% of the site's URLs and are decoration the app fetches, not pages.
+
 ## Project layout
 
 ```
 app/
-  assets/        Cartridge artwork and Vuetify SASS variables
-  components/    CartridgeCard, CartridgeInfo, CartridgeInput
+  assets/        Vuetify SASS variables
+  components/    CartridgeCard, CartridgeInfo, CartridgeInput,
+                 ImportSaves, ExportSaves
   layouts/       App shell: nav drawer, app bar, footer
   models/        Dsv and DsvInfo
   pages/         /, /convert, /history
-  plugins/       DSV parsing, Vuetify setup
+  plugins/       DSV parsing, game icon lookup, folder access, Vuetify setup
   stores/        Pinia: current save, session history
-public/          Favicon, PWA icon source, generated icon set
+public/          Images, favicon, PWA icon source, game icons
+  icons/         Per-game cartridge icons, named after the game
+scripts/         SonarQube helpers, game icon rebuild
 test/            Vitest suite, mirroring app/
+  fixtures/      A real 512 kb save the conversion tests round trip
 ```
 
 Components pair a `.vue` template with sibling `.ts` and `.css` files, which the
 template pulls in via `<script src>` and `<style src>`.
+
+Images all live in `public/`, so the bundler serves them as files rather than
+packing them into the JavaScript - which matters most for `public/icons`, where
+there are several thousand. The cost is that anything referencing them carries
+the base path by hand.
+
+## Importing and exporting saves
+
+**History** carries both ends of a card's round trip.
+
+*Import* scans a folder, memory card or drive and adds every `.dsv` and `.sav`
+it finds, at any depth. Re-scanning the same card does not duplicate anything:
+a save already in the list is counted and skipped.
+
+*Export* writes every save in the list back out, as `.DSV` (with a DeSmuME
+footer) or `.SAV` (raw, as a cartridge holds it). A save already in the format
+asked for is copied untouched rather than converted and back again.
+
+Both use the File System Access API's directory picker, not WebUSB - WebUSB
+talks to a USB device as a device, with no notion of partitions or files, so it
+cannot read a mounted card. That picker is desktop Chromium only. Elsewhere,
+importing falls back to a directory `<input>` and exporting to ordinary
+downloads; neither can address a folder directly, but a card can still be read
+and written.
+
+A scan stops after 20,000 entries or 500 saves and says so, so that pointing it
+at a home directory or a system drive cannot spin forever or exhaust the tab's
+memory. A save that cannot be read, or written, is counted and skipped rather
+than abandoning the rest.
+
+## Game icons
+
+The cartridge shows the icon its game had in the DS menu. A save says nothing
+about which game it belongs to - not in its bytes, not in the DSV footer - so
+the only clue is the file name, and the match is made on the game name in it.
+Saves named the usual way are recognised, including the scene form
+`4780 - Pokemon HeartGold Version (U).sav`; a save renamed to something like
+`my save.sav` simply leaves the label blank.
+
+The icons come from a set published by ds-scene.com. See
+[`public/icons/README.md`](public/icons/README.md) for attribution, how they are
+stored, and how to rebuild them.
 
 ## Built with
 
