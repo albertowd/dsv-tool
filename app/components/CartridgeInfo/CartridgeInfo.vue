@@ -1,6 +1,6 @@
 <template>
   <v-card v-if="dsv" flat>
-    <v-card-title>
+    <v-card-title class="cartridge-name">
       {{ dsv.name }}
     </v-card-title>
     <v-card-subtitle>{{ (dsv.size / 1024).toFixed(1) }} kb - {{ new Date(dsv.lastModified).toLocaleString() }}</v-card-subtitle>

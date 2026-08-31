@@ -1,3 +1,12 @@
+/* Vuetify clips a card title to a single line and ellipsises the rest. The
+   save's name is the one thing here worth reading in full, and file names run
+   long, so let it wrap instead - breaking inside a word where a name has no
+   spaces to break on, rather than spilling out of the column. */
+.cartridge-name {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 .cartridge {
   max-height: 256px;
   max-width: 256px;

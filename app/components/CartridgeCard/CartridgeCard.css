@@ -1,3 +1,16 @@
+/* Height of the actions strip, matching `v-card-actions`' own minimum. */
+.cartridge-row {
+  --cartridge-actions-height: 52px;
+}
+
+/* The actions strip closes the card off at the bottom with nothing balancing
+   it at the top, which leaves the cartridge looking stuck to the card's edge.
+   Matching that height above puts the artwork back on the card's centre line,
+   and keeps it there when the info column is the taller of the two. */
+.cartridge-row {
+  padding-top: var(--cartridge-actions-height);
+}
+
 .cartridge-info {
     max-height: 256px;
 }

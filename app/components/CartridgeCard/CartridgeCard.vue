@@ -1,10 +1,21 @@
 <template>
   <v-card>
-    <v-row justify="center">
-      <v-col class="text-center">
+    <v-row
+      align="center"
+      class="cartridge-row"
+      justify="center"
+    >
+      <v-col
+        class="text-center"
+        cols="12"
+        md="4"
+      >
         <CartridgeInput :dsv-index="dsvIndex" />
       </v-col>
-      <v-col>
+      <v-col
+        cols="12"
+        md="8"
+      >
         <CartridgeInfo :dsv-index="dsvIndex" />
       </v-col>
     </v-row>
