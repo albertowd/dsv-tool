@@ -20,12 +20,15 @@
       </v-list>
     </v-navigation-drawer>
     <v-main>
-      <v-container>
-        <slot />
+      <v-container class="page">
+        <div class="page-content">
+          <slot />
+        </div>
       </v-container>
     </v-main>
     <v-footer app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
+      <span class="text-medium-emphasis ms-2">v{{ version }}</span>
       <v-spacer />
       <v-btn
         href="https://albertowd.dev"
@@ -59,9 +62,12 @@
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig()
+
 // Images live in `public/` so the bundler never inlines them; that means
 // carrying the base path by hand, the way `nuxt.config.ts` does for the icons.
-const awdIcon = `${useRuntimeConfig().app.baseURL}awd.webp`
+const awdIcon = `${config.app.baseURL}awd.webp`
+const version = config.public.version
 
 const drawer = ref(false)
 const title = 'DSV Tool'
@@ -83,3 +89,23 @@ const items = [
   }
 ]
 </script>
+
+<style scoped>
+/* `v-main` already fills the window, but the page inside it sat at the top, so
+   any screen taller than the content left a band of dead space above the
+   footer. */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Auto margins centre the page in whatever room is left over. Unlike
+   `justify-content: center` they simply collapse when the content is taller
+   than the screen, rather than overflowing past the top where it cannot be
+   scrolled back to. */
+.page-content {
+  margin-block: auto;
+  width: 100%;
+}
+</style>

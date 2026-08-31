@@ -1,5 +1,7 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
+import { version } from './package.json'
+
 // A site served from a subpath rather than the domain root needs that prefix on
 // every absolute asset path. Whatever publishes the build sets
 // NUXT_APP_BASE_URL; locally it stays `/`.
@@ -57,6 +59,13 @@ export default defineNuxtConfig({
   // file and the route ends up with no render function.
   ignore: ['**/pages/**/*.ts'],
 
+  // Read from `package.json` so the footer cannot drift from the release.
+  runtimeConfig: {
+    public: {
+      version
+    }
+  },
+
   modules: [
     '@nuxt/eslint',
     '@pinia/nuxt',
@@ -75,6 +84,22 @@ export default defineNuxtConfig({
 
   pwa: {
     registerType: 'autoUpdate',
+
+    workbox: {
+      // The Nuxt PWA module seeds `globPatterns` with the app manifest's JSON
+      // and nothing else, which replaces vite-plugin-pwa's defaults instead of
+      // adding to them. The shell then never reaches the precache, while the
+      // SPA `navigateFallback` still points at `/`, so the service worker
+      // threw `non-precached-url` on every navigation. Spelling the patterns
+      // out puts the shell back.
+      globPatterns: ['**/*.{js,css,html,webmanifest,woff2,webp}'],
+      // Except the game icons: at most one is wanted per save, and precaching
+      // 4844 of them would pull the whole set down before the first one is
+      // needed.
+      globIgnores: ['**/icons/**'],
+      navigateFallback: '/'
+    },
+
     // Generates the icon set from `public/icon.png` (see pwa-assets.config.ts)
     // and injects the matching head links.
     pwaAssets: {
