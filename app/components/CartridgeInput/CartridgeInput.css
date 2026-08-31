@@ -1,6 +1,9 @@
 .cartridge {
   max-height: 256px;
-  max-width: 256px;
+  /* 256px tall at the artwork's 222x239 shape. The cartridge PNGs are cropped
+     to their own edges, so the image box is the cartridge: no transparent
+     margin to throw the centring off, and percentages land on the artwork. */
+  max-width: 238px;
 }
 
 .cartridge-insert {
@@ -48,4 +51,25 @@
 
 .cartridge {
   transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+/* The printed label, as a fraction of the artwork. Measured off the cropped
+   cartridge: x 23..193 of 222, y 47..177 of 239. */
+.cartridge-label {
+  align-items: center;
+  display: flex;
+  height: 54.812%;
+  justify-content: center;
+  left: 10.360%;
+  position: absolute;
+  top: 19.665%;
+  width: 77.027%;
+}
+
+/* A 32x32 menu icon blown up well past its size, so keep the pixels square
+   instead of letting the browser smooth them into mush. */
+.cartridge-icon {
+  height: 58%;
+  image-rendering: pixelated;
+  width: auto;
 }

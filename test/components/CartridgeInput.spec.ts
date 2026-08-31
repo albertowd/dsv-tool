@@ -11,16 +11,20 @@ interface CartridgeInputVm {
   cardType: string
   cartridgeImage: string
   changeCurrentDsv: (picked: File | File[] | null) => void
+  gameIcon: string | null
+  iconMissing: boolean
 }
 
 /**
  * Builds a Dsv that counts as loaded.
  * @param size Byte size to report.
+ * @param name File name to report.
  * @returns the Dsv.
  */
-function sized (size: number): Dsv {
+function sized (size: number, name: string = '-'): Dsv {
   const dsv = new Dsv()
   dsv.size = size
+  dsv.name = name
   return dsv
 }
 
@@ -87,5 +91,48 @@ describe('CartridgeInput', () => {
     vm.changeCurrentDsv([])
 
     expect(useCurrentStore().dsv.name).toBe('-')
+  })
+
+  test('points the label at the game the save name names', async () => {
+    useCurrentStore().update(sized(524_288, '4780 - Pokemon HeartGold Version (U).sav'))
+
+    const wrapper = await mountSuspended(CartridgeInput)
+
+    expect((wrapper.vm as unknown as CartridgeInputVm).gameIcon)
+      .toContain('icons/pokemon-heartgold.webp')
+  })
+
+  test('leaves the label bare while nothing is loaded', async () => {
+    const wrapper = await mountSuspended(CartridgeInput)
+
+    expect((wrapper.vm as unknown as CartridgeInputVm).gameIcon).toBeNull()
+  })
+
+  test('leaves the label bare once the icon fails to load', async () => {
+    useCurrentStore().update(sized(524_288, 'a save nobody named after a game.sav'))
+
+    const wrapper = await mountSuspended(CartridgeInput)
+    const vm = wrapper.vm as unknown as CartridgeInputVm
+
+    // The set cannot be consulted up front, so the miss only shows up as a
+    // failed request; that is the signal the cartridge drops the icon on.
+    vm.iconMissing = true
+    await wrapper.vm.$nextTick()
+
+    expect(vm.gameIcon).toBeNull()
+  })
+
+  test('gives a newly loaded save its own chance at an icon', async () => {
+    useCurrentStore().update(sized(524_288, 'unknown.sav'))
+
+    const wrapper = await mountSuspended(CartridgeInput)
+    const vm = wrapper.vm as unknown as CartridgeInputVm
+    vm.iconMissing = true
+    await wrapper.vm.$nextTick()
+
+    useCurrentStore().update(sized(524_288, 'Mario Kart DS.sav'))
+    await vi.waitFor(() => {
+      expect(vm.gameIcon).toContain('icons/mario-kart-ds.webp')
+    })
   })
 })

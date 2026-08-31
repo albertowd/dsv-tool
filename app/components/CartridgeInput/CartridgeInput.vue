@@ -11,14 +11,30 @@
     <v-img
       contain
       class="cartridge-img"
+      :alt="loaded ? 'Nintendo DS cartridge holding a save' : 'Empty Nintendo DS cartridge'"
+      :aspect-ratio="CARTRIDGE_ASPECT"
       :src="cartridgeImage"
     />
+    <!-- Sits on the cartridge's printed label, where a DS shows the game's
+         own icon. Only ever a guess from the file name, so a load failure is
+         the normal "not in the set" answer and just leaves the label bare. -->
+    <div
+      v-if="gameIcon"
+      class="cartridge-label"
+    >
+      <img
+        alt=""
+        class="cartridge-icon"
+        :src="gameIcon"
+        @error="iconMissing = true"
+      >
+    </div>
     <v-overlay
       contained
       persistent
       class="align-center justify-center"
       theme="light"
-      :model-value="file === null"
+      :model-value="!loaded"
       :scrim="false"
     >
       <v-file-input

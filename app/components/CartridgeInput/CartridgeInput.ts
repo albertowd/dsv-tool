@@ -9,6 +9,12 @@ const CARTRIDGE_IMAGES: Record<string, string> = {
   grey: 'nds-cartridge-grey.webp'
 }
 
+/**
+ * Shape of the cartridge artwork. Pinning it means the rendered image box is
+ * the artwork itself, which is what the label overlay is positioned against.
+ */
+const CARTRIDGE_ASPECT: number = 222 / 239
+
 export default defineComponent({
   props: {
     dsvIndex: {
@@ -18,6 +24,7 @@ export default defineComponent({
   },
   setup () {
     return {
+      CARTRIDGE_ASPECT,
       baseUrl: useRuntimeConfig().app.baseURL,
       current: useCurrentStore(),
       history: useHistoryStore()
@@ -26,24 +33,50 @@ export default defineComponent({
   data () {
     return {
       dragging: false,
-      file: null as File | null
+      file: null as File | null,
+      // The icon URL is a guess built from the save's name, so a load failure
+      // is the ordinary "this game is not in the set" answer, not an error.
+      iconMissing: false
     }
   },
   computed: {
     cardType (): string {
-      return (this.dsv?.size ?? 0) > 0 ? 'gold' : 'grey'
+      return this.loaded ? 'gold' : 'grey'
     },
     cartridgeImage (): string {
       return `${this.baseUrl}${CARTRIDGE_IMAGES[this.cardType] ?? CARTRIDGE_IMAGES.grey}`
     },
     dsv (): Dsv | undefined {
       return this.dsvIndex < 0 ? this.current.dsv : this.history.dsvs[this.dsvIndex]
+    },
+    loaded (): boolean {
+      return (this.dsv?.size ?? 0) > 0
+    },
+    gameIcon (): string | null {
+      if (!this.saveName || this.iconMissing) {
+        return null
+      }
+      return this.$gameIconUrl(this.saveName)
+    },
+    saveName (): string {
+      const name: string | undefined = this.dsv?.name
+      // `-` is the placeholder an empty Dsv carries, not a file name.
+      return !name || name === '-' ? '' : name
+    }
+  },
+  watch: {
+    // Reset on the name rather than on `gameIcon`: that one is derived from
+    // `iconMissing`, so clearing the flag would revive the icon it just gave
+    // up on, and the two would chase each other.
+    saveName (): void {
+      this.iconMissing = false
     }
   },
   methods: {
     changeCurrentDsv (picked: File | File[] | null): void {
       const file: File | null = Array.isArray(picked) ? (picked[0] ?? null) : picked
       if (file) {
+        this.iconMissing = false
         this.$fileToDsv(file)
           .then((dsv: Dsv): void => {
             this.current.update(dsv)
