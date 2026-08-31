@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <v-app-bar app>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon
+        aria-label="Toggle navigation"
+        @click.stop="drawer = !drawer"
+      />
       <v-toolbar-title>{{ title }}</v-toolbar-title>
     </v-app-bar>
     <v-navigation-drawer
@@ -53,7 +56,7 @@
         target="_blank"
         rel="noopener"
         variant="text"
-        icon="mdi-github"
+        :icon="mdiGithub"
         title="GitHub"
         aria-label="GitHub"
       />
@@ -62,6 +65,8 @@
 </template>
 
 <script setup lang="ts">
+import { mdiContentSave, mdiContentSaveAll, mdiGithub, mdiNintendoGameBoy } from '@mdi/js'
+
 const config = useRuntimeConfig()
 
 // Images live in `public/` so the bundler never inlines them; that means
@@ -73,17 +78,17 @@ const drawer = ref(false)
 const title = 'DSV Tool'
 const items = [
   {
-    icon: 'mdi-nintendo-game-boy',
+    icon: mdiNintendoGameBoy,
     title: 'Home',
     to: '/'
   },
   {
-    icon: 'mdi-content-save',
+    icon: mdiContentSave,
     title: 'Convert',
     to: '/convert'
   },
   {
-    icon: 'mdi-content-save-all',
+    icon: mdiContentSaveAll,
     title: 'History',
     to: '/history'
   }

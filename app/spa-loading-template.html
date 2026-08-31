@@ -1,0 +1,39 @@
+<!--
+  Shown from the moment the HTML arrives until Vue mounts.
+
+  With `ssr: false` the document is an empty shell, so nothing at all painted
+  until the bundle had booted - on a throttled phone that was 87% of the
+  largest-contentful-paint. This paints the same artwork, at the same size and
+  in the same place as the real page, so the first paint happens immediately
+  and swapping to the mounted app does not move anything.
+
+  Styles are inline because the app's stylesheet is not guaranteed to have
+  arrived yet, and the colours are the dark theme's own so there is no flash.
+
+  The image path assumes the site is served from the domain root. A build with
+  NUXT_APP_BASE_URL set to a subpath would need it prefixed to match.
+-->
+<div style="
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background: #121212;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: Roboto, system-ui, -apple-system, 'Segoe UI', sans-serif;
+">
+  <img
+    src="/hero.webp"
+    alt=""
+    width="180"
+    height="180"
+    fetchpriority="high"
+    style="width: 180px; height: 180px;"
+  >
+  <p style="margin: 0; font-size: 1.25rem; line-height: 1.6;">
+    A DSV (DeSmuME/DraStic) converter from/to RAW DS save files.
+  </p>
+</div>

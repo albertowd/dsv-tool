@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+#
+# The tool itself is worth finding, so crawling is allowed.
+
+User-agent: *
+Allow: /
+
+# Except the game icons. There are 4844 of them, one per DS release, and they
+# are decoration the app fetches at most one of per save - not pages. Left
+# open, they are 99% of the site's URLs and would swamp any crawl of it.
+Disallow: /icons/

@@ -1,5 +1,7 @@
 import { defineComponent } from 'vue'
 
+import { mdiDelete, mdiDownloadBox } from '@mdi/js'
+
 import CartridgeInfo from '~/components/CartridgeInfo/CartridgeInfo.vue'
 import CartridgeInput from '~/components/CartridgeInput/CartridgeInput.vue'
 import type Dsv from '~/models/Dsv'
@@ -20,6 +22,8 @@ export default defineComponent({
   },
   setup () {
     return {
+      mdiDelete,
+      mdiDownloadBox,
       current: useCurrentStore(),
       history: useHistoryStore()
     }

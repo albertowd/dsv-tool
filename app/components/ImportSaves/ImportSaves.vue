@@ -1,7 +1,7 @@
 <template>
   <div class="import-saves">
     <v-btn
-      prepend-icon="mdi-usb-flash-drive"
+      :prepend-icon="mdiUsbFlashDrive"
       variant="text"
       :loading="scanning"
       @click="canPickFolder ? scanFolder() : browse()"
@@ -48,7 +48,7 @@
       {{ outcomeMessage }}
       <template #actions>
         <v-btn
-          icon="mdi-close"
+          :icon="mdiClose"
           aria-label="Dismiss"
           variant="text"
           @click="showOutcome = false"

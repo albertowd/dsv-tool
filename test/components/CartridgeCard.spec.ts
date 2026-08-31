@@ -46,6 +46,6 @@ describe('CartridgeCard', () => {
 
     expect(text).toContain('.DSV')
     expect(text).toContain('.SAV')
-    expect(wrapper.find('.mdi-delete').exists()).toBe(true)
+    expect(wrapper.find('[aria-label="Delete save"]').exists()).toBe(true)
   })
 })

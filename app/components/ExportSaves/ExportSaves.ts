@@ -1,5 +1,7 @@
 import { defineComponent } from 'vue'
 
+import { mdiClose, mdiContentSave, mdiContentSaveOutline, mdiFolderArrowDownOutline, mdiMenuDown } from '@mdi/js'
+
 import type { SaveFormat } from '~/plugins/dsv-tools.client'
 import type { OutgoingSave, WriteResult } from '~/plugins/save-folder.client'
 import { useHistoryStore } from '~/stores/history'
@@ -17,6 +19,11 @@ interface ExportOutcome {
 export default defineComponent({
   setup () {
     return {
+      mdiClose,
+      mdiContentSave,
+      mdiContentSaveOutline,
+      mdiFolderArrowDownOutline,
+      mdiMenuDown,
       history: useHistoryStore()
     }
   },

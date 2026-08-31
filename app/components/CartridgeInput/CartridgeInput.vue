@@ -42,7 +42,7 @@
         accept=".dsv,.sav"
         class="cartridge-input"
         density="compact"
-        prepend-icon="mdi-upload"
+        :prepend-icon="mdiUpload"
         :clearable="false"
         :hide-input="true"
         :truncate-length="128"

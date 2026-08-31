@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@fontsource/roboto": "^5",
-    "@mdi/font": "^7",
+    "@mdi/js": "^7.4.47",
     "@pinia/nuxt": "^1",
     "nuxt": "^4",
     "pinia": "^4",

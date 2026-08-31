@@ -34,7 +34,7 @@ describe('home page', () => {
     const image = wrapper.findComponent(VImg)
 
     expect(image.exists()).toBe(true)
-    expect(image.props('src')).toBe('/icon.png')
+    expect(image.props('src')).toBe('/hero.webp')
     // The heading carries the name, so the artwork must not repeat it.
     expect(image.props('alt')).toBe('')
   })

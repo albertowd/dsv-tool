@@ -8,9 +8,14 @@
       <div class="text-center">
         <!-- The icon carries the wordmark, so the heading is for assistive
              tech only and the image is decorative. -->
+        <!-- Largest element on the page, so it is served at the size it is
+             drawn rather than as the 512px PWA source, and its box is given
+             both dimensions so the page does not shift once it lands. -->
         <v-img
           alt=""
           class="mx-auto mb-6"
+          :aspect-ratio="1"
+          :height="180"
           :src="iconSrc"
           :width="180"
         />
@@ -52,7 +57,7 @@
         <v-btn
           class="ma-2"
           color="primary"
-          prepend-icon="mdi-content-save"
+          :prepend-icon="mdiContentSave"
           size="large"
           to="/convert"
         >
@@ -60,7 +65,7 @@
         </v-btn>
         <v-btn
           class="ma-2"
-          prepend-icon="mdi-content-save-all"
+          :prepend-icon="mdiContentSaveAll"
           size="large"
           to="/history"
           variant="text"
@@ -73,23 +78,31 @@
 </template>
 
 <script setup lang="ts">
-// Public assets sit under the deployment's base path, which is `/` locally
-// and `/<repo>/` on GitHub Pages.
-const iconSrc = `${useRuntimeConfig().app.baseURL}icon.png`
+import {
+  mdiContentSave,
+  mdiContentSaveAll,
+  mdiHistory,
+  mdiShieldLockOutline,
+  mdiUsbFlashDrive
+} from '@mdi/js'
+
+// Public assets sit under the deployment's base path, which is `/` unless the
+// build was given one.
+const iconSrc = `${useRuntimeConfig().app.baseURL}hero.webp`
 
 const features = [
   {
-    icon: 'mdi-shield-lock-outline',
+    icon: mdiShieldLockOutline,
     title: 'Stays on your device',
     text: 'Saves are read in the browser. Nothing is uploaded to a server.'
   },
   {
-    icon: 'mdi-usb-flash-drive',
+    icon: mdiUsbFlashDrive,
     title: 'Import and export',
     text: 'Scan a folder, memory card or drive for saves, and write them back as .DSV or .SAV.'
   },
   {
-    icon: 'mdi-history',
+    icon: mdiHistory,
     title: 'Keep a history',
     text: 'Loaded saves stay in a session history so you can revisit them.'
   }

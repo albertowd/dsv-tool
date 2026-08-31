@@ -4,8 +4,8 @@
       <template #activator="{ props }">
         <v-btn
           v-bind="props"
-          append-icon="mdi-menu-down"
-          prepend-icon="mdi-folder-arrow-down-outline"
+          :append-icon="mdiMenuDown"
+          :prepend-icon="mdiFolderArrowDownOutline"
           variant="text"
           :disabled="empty"
           :loading="writing"
@@ -29,13 +29,13 @@
            separate control: a save is written either with a footer or without. -->
       <v-list density="compact">
         <v-list-item
-          prepend-icon="mdi-content-save"
+          :prepend-icon="mdiContentSave"
           title="All as .DSV"
           subtitle="With a DeSmuME footer"
           @click="exportAll('dsv')"
         />
         <v-list-item
-          prepend-icon="mdi-content-save-outline"
+          :prepend-icon="mdiContentSaveOutline"
           title="All as .SAV"
           subtitle="Raw, as a cartridge holds it"
           @click="exportAll('sav')"
@@ -52,7 +52,7 @@
       {{ outcomeMessage }}
       <template #actions>
         <v-btn
-          icon="mdi-close"
+          :icon="mdiClose"
           aria-label="Dismiss"
           variant="text"
           @click="showOutcome = false"

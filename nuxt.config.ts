@@ -20,10 +20,18 @@ export default defineNuxtConfig({
     head: {
       titleTemplate: '%s - DSV Tool',
       title: 'DSVTool',
+      // Without this the document has no language, which assistive tech and
+      // search engines both need.
+      htmlAttrs: { lang: 'en' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: '' },
+        {
+          name: 'description',
+          content: 'Convert Nintendo DS emulator saves between DSV (DeSmuME, DraStic) '
+            + 'and raw .sav, and inspect the DSV footer. Runs entirely in your browser - '
+            + 'nothing is uploaded.'
+        },
         // Equivalents of the tags the Nuxt 2 PWA meta module used to inject.
         { name: 'theme-color', content: '#1976d2' },
         { name: 'mobile-web-app-capable', content: 'yes' },
@@ -31,22 +39,28 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-title', content: 'DSVTool' }
       ],
       link: [
+        // The home page's hero is its largest element, and with no server
+        // render the browser cannot discover it until the bundle has booted.
+        // Preloading starts it in parallel instead. Routing is client side, so
+        // a visitor pays for this once, on the page that uses it.
+        { rel: 'preload', as: 'image', type: 'image/webp', fetchpriority: 'high', href: `${baseURL}hero.webp` },
         { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico` },
         { rel: 'apple-touch-icon', href: `${baseURL}apple-touch-icon-180x180.png`, sizes: '180x180' }
       ]
     }
   },
 
-  // Self-hosted equivalents of the CDN assets the Vuetify 2 Nuxt module used to
-  // inject: Roboto (the weights it requested) and the MDI icon font.
+  // Self-hosted Roboto, in the weights the Vuetify 2 Nuxt module used to
+  // request from a CDN. The MDI icon font is deliberately absent: icons come
+  // from `@mdi/js` as SVG paths instead, so only the ones actually drawn are
+  // shipped. See `app/plugins/vuetify.ts`.
   css: [
     '@fontsource/roboto/100.css',
     '@fontsource/roboto/300.css',
     '@fontsource/roboto/400.css',
     '@fontsource/roboto/500.css',
     '@fontsource/roboto/700.css',
-    '@fontsource/roboto/900.css',
-    '@mdi/font/css/materialdesignicons.css'
+    '@fontsource/roboto/900.css'
   ],
 
   // Components pair a `.vue` template with a sibling `.ts` options file, so only

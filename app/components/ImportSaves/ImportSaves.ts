@@ -1,5 +1,7 @@
 import { defineComponent } from 'vue'
 
+import { mdiClose, mdiUsbFlashDrive } from '@mdi/js'
+
 import type Dsv from '~/models/Dsv'
 import type { ScanResult } from '~/plugins/save-folder.client'
 import { useHistoryStore } from '~/stores/history'
@@ -17,6 +19,8 @@ interface ImportOutcome {
 export default defineComponent({
   setup () {
     return {
+      mdiClose,
+      mdiUsbFlashDrive,
       history: useHistoryStore()
     }
   },

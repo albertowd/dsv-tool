@@ -1,5 +1,7 @@
 import { defineComponent } from 'vue'
 
+import { mdiUpload } from '@mdi/js'
+
 import type Dsv from '~/models/Dsv'
 import { useCurrentStore } from '~/stores/current'
 import { useHistoryStore } from '~/stores/history'
@@ -24,6 +26,7 @@ export default defineComponent({
   },
   setup () {
     return {
+      mdiUpload,
       CARTRIDGE_ASPECT,
       baseUrl: useRuntimeConfig().app.baseURL,
       current: useCurrentStore(),

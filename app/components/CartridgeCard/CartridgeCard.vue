@@ -23,10 +23,11 @@
       <v-btn
         color="red"
         variant="text"
+        aria-label="Delete save"
         :disabled="!loaded"
         @click="remove"
       >
-        <v-icon>mdi-delete</v-icon>
+        <v-icon :icon="mdiDelete" />
       </v-btn>
       <v-spacer />
       <v-btn
@@ -35,7 +36,7 @@
         :disabled="!loaded"
         @click="saveAsDsv"
       >
-        <v-icon>mdi-download-box</v-icon> .DSV
+        <v-icon :icon="mdiDownloadBox" /> .DSV
       </v-btn>
       <v-btn
         color="gold"
@@ -43,7 +44,7 @@
         :disabled="!loaded"
         @click="saveAsSav"
       >
-        <v-icon>mdi-download-box</v-icon> .SAV
+        <v-icon :icon="mdiDownloadBox" /> .SAV
       </v-btn>
     </v-card-actions>
   </v-card>
