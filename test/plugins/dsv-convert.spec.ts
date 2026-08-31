@@ -84,7 +84,7 @@ describe('round trips', () => {
   })
 
   test('converts the real Pokemon HeartGold save in the repo', () => {
-    const path = resolve(process.cwd(), 'app/assets/4780 - Pokemon HeartGold Version (U).sav')
+    const path = resolve(process.cwd(), 'test/fixtures/4780 - Pokemon HeartGold Version (U).sav')
     const sav = new Uint8Array(readFileSync(path))
 
     expect(isDsv(sav)).toBe(false)
