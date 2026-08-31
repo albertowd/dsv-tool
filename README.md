@@ -9,7 +9,6 @@
 Inspect and convert Nintendo DS emulator saves entirely in your browser —
 nothing is uploaded anywhere.
 
-[![Deploy to GitHub Pages](https://github.com/albertowd/dsv-tool/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/albertowd/dsv-tool/actions/workflows/deploy-pages.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Nuxt](https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxtdotjs&logoColor=white)](https://nuxt.com)
 [![Vuetify](https://img.shields.io/badge/Vuetify-4-1867C0?logo=vuetify&logoColor=white)](https://vuetifyjs.com)
@@ -125,15 +124,13 @@ scans, and prints the dashboard URL and login.
 
 ## Deployment
 
-Pushing to `main` builds the static site and publishes it to GitHub Pages via
-[`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). The
-workflow lints and tests before it will deploy.
+`npm run generate` writes the whole static site to `.output/public`. Deployment
+is handled outside this repository, by an external tool that publishes that
+directory; there is no deploy workflow here.
 
-Because a project site is served from `/dsv-tool/` rather than the domain root,
-the build takes its base path from `NUXT_APP_BASE_URL`, which the workflow
-supplies. Locally it stays `/`, so nothing special is needed for development.
-
-To build the site exactly as CI does:
+If the site is served from a subpath rather than a domain root, the build takes
+its base path from `NUXT_APP_BASE_URL`. Locally it stays `/`, so nothing special
+is needed for development.
 
 ```bash
 NUXT_APP_BASE_URL=/dsv-tool/ npm run generate

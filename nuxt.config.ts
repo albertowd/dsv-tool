@@ -1,8 +1,8 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
-// GitHub Pages serves a project site from `/<repo>/`, not from the domain
-// root, so every absolute asset path has to carry that prefix. The deploy
-// workflow sets NUXT_APP_BASE_URL; locally it stays `/`.
+// A site served from a subpath rather than the domain root needs that prefix on
+// every absolute asset path. Whatever publishes the build sets
+// NUXT_APP_BASE_URL; locally it stays `/`.
 const baseURL: string = (process.env.NUXT_APP_BASE_URL || '/').replace(/\/?$/, '/')
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
