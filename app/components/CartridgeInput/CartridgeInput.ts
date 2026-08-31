@@ -1,14 +1,12 @@
 import { defineComponent } from 'vue'
 
-import goldCartridge from '~/assets/nds-cartridge-gold.png'
-import greyCartridge from '~/assets/nds-cartridge-grey.png'
 import type Dsv from '~/models/Dsv'
 import { useCurrentStore } from '~/stores/current'
 import { useHistoryStore } from '~/stores/history'
 
 const CARTRIDGE_IMAGES: Record<string, string> = {
-  gold: goldCartridge,
-  grey: greyCartridge
+  gold: 'nds-cartridge-gold.webp',
+  grey: 'nds-cartridge-grey.webp'
 }
 
 export default defineComponent({
@@ -20,6 +18,7 @@ export default defineComponent({
   },
   setup () {
     return {
+      baseUrl: useRuntimeConfig().app.baseURL,
       current: useCurrentStore(),
       history: useHistoryStore()
     }
@@ -35,7 +34,7 @@ export default defineComponent({
       return (this.dsv?.size ?? 0) > 0 ? 'gold' : 'grey'
     },
     cartridgeImage (): string {
-      return CARTRIDGE_IMAGES[this.cardType] ?? greyCartridge
+      return `${this.baseUrl}${CARTRIDGE_IMAGES[this.cardType] ?? CARTRIDGE_IMAGES.grey}`
     },
     dsv (): Dsv | undefined {
       return this.dsvIndex < 0 ? this.current.dsv : this.history.dsvs[this.dsvIndex]

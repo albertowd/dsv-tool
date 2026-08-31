@@ -15,7 +15,7 @@ nothing is uploaded anywhere.
 
 **[→ Open the app](https://albertowd.github.io/dsv-tool/)**
 
-<img src="docs/screenshot-home.png" alt="DSV Tool home screen" width="820">
+<img src="docs/screenshot-home.webp" alt="DSV Tool home screen" width="820">
 
 </div>
 
