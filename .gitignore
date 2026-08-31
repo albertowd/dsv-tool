@@ -94,3 +94,6 @@ sw.*
 
 # SonarQube scanner working directory
 .scannerwork
+
+# Playwright mcp for validating pixels
+.playwright-mcp
