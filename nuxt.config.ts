@@ -7,6 +7,12 @@ import { version } from './package.json'
 // NUXT_APP_BASE_URL; locally it stays `/`.
 const baseURL: string = (process.env.NUXT_APP_BASE_URL || '/').replace(/\/?$/, '/')
 
+// Vercel Analytics reports only from a Vercel deployment: the script it loads
+// is served by the platform, so anywhere else that request 404s and the tag
+// logs a console error for nothing. Vercel sets `VERCEL` on its build
+// machines, so the module ships only in the builds it can work in.
+const onVercel: boolean = process.env.VERCEL === '1'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2026-08-28',
@@ -73,9 +79,15 @@ export default defineNuxtConfig({
   // file and the route ends up with no render function.
   ignore: ['**/pages/**/*.ts'],
 
-  // Read from `package.json` so the footer cannot drift from the release.
   runtimeConfig: {
     public: {
+      // GA4 property the deployed site reports to. Empty switches analytics
+      // off altogether, and `NUXT_PUBLIC_GTAG_ID` overrides it at build time;
+      // a local run reports nothing either way. See
+      // `app/plugins/analytics.client.ts`.
+      gtagId: 'G-Y6X6QW0VFB',
+
+      // Read from `package.json` so the footer cannot drift from the release.
       version
     }
   },
@@ -83,6 +95,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@pinia/nuxt',
+    // Nuxt drops a falsy entry, so this is simply absent off Vercel.
+    onVercel && '@vercel/analytics',
     '@vite-pwa/nuxt',
     // Vuetify ships as a Vite plugin; this hook wires in its treeshaking and
     // SASS variable handling.

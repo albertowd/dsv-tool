@@ -68,6 +68,9 @@ typings/
 # nuxt build output
 .nuxt
 .output
+
+# vercel build output and local project link
+.vercel
 .data
 .nitro
 

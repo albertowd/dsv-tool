@@ -3,6 +3,7 @@
     "@fontsource/roboto": "^5",
     "@mdi/js": "^7.4.47",
     "@pinia/nuxt": "^1",
+    "@vercel/analytics": "^2",
     "nuxt": "^4",
     "pinia": "^4",
     "vue": "^3",

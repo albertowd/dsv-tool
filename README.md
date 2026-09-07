@@ -155,6 +155,38 @@ not send. Everything under `_nuxt/` is content hashed and safe to serve
 `public/robots.txt` allows crawling but disallows `/icons/`: those 4844 files
 are 99% of the site's URLs and are decoration the app fetches, not pages.
 
+## Analytics
+
+The deployed site reports page views to Google Analytics and to Vercel
+Analytics. Neither sees a save: everything the app does with a file happens in
+the tab, and only the route, page title and referrer are reported.
+
+A development machine reports nothing. `npm run generate` produces the same
+bundle that gets published and it is regularly served locally to check the real
+thing, so that is decided at runtime from the hostname rather than from a build
+flag - localhost, a loopback or private LAN address, and the `.local`, `.test`
+and `.internal` suffixes are all treated as local.
+
+Vercel Analytics can only report from a Vercel deployment, since the script it
+loads is served by the platform - anywhere else that request 404s and the tag
+logs a console error for nothing. So the module is added to the build only when
+`VERCEL` is set, which Vercel does on its build machines; every other build,
+local ones included, leaves it out entirely.
+
+Because the app routes on the client, the document loads once and gtag.js would
+otherwise count one page view for a visit that walked every route. The
+automatic view is turned off and one is sent per navigation instead, on the
+tick after the route settles so the title belongs to the page on screen. See
+[`app/plugins/analytics.client.ts`](app/plugins/analytics.client.ts).
+
+The measurement ID lives in `runtimeConfig.public.gtagId`. Setting
+`NUXT_PUBLIC_GTAG_ID` overrides it at build time, and an empty value switches
+Google Analytics off entirely.
+
+```bash
+NUXT_PUBLIC_GTAG_ID= npm run generate
+```
+
 ## Project layout
 
 ```
@@ -165,7 +197,8 @@ app/
   layouts/       App shell: nav drawer, app bar, footer
   models/        Dsv and DsvInfo
   pages/         /, /convert, /history
-  plugins/       DSV parsing, game icon lookup, folder access, Vuetify setup
+  plugins/       DSV parsing, game icon lookup, folder access, analytics,
+                 Vuetify setup
   stores/        Pinia: current save, session history
 public/          Images, favicon, PWA icon source, game icons
   icons/         Per-game cartridge icons, named after the game
@@ -224,7 +257,8 @@ stored, and how to rebuild them.
 [Nuxt 4](https://nuxt.com) · [Vue 3](https://vuejs.org) ·
 [Vuetify 4](https://vuetifyjs.com) · [Pinia](https://pinia.vuejs.org) ·
 [Vite PWA](https://vite-pwa-org.netlify.app) · [Vitest](https://vitest.dev) ·
-[TypeScript](https://www.typescriptlang.org)
+[TypeScript](https://www.typescriptlang.org) ·
+[Vercel Analytics](https://vercel.com/docs/analytics)
 
 ## License
 
