@@ -13,7 +13,7 @@ nothing is uploaded anywhere.
 [![Nuxt](https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxtdotjs&logoColor=white)](https://nuxt.com)
 [![Vuetify](https://img.shields.io/badge/Vuetify-4-1867C0?logo=vuetify&logoColor=white)](https://vuetifyjs.com)
 
-**[→ Open the app](https://albertowd.github.io/dsv-tool/)**
+**[→ Open the app](https://dsv-tool.albertowd.dev)**
 
 <img src="docs/screenshot-home.webp" alt="DSV Tool home screen" width="820">
 

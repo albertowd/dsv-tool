@@ -33,8 +33,7 @@ afterEach(() => {
 
 describe('isTrackedHost', () => {
   test('reports from the published site', () => {
-    expect(isTrackedHost('dsv.albertowd.dev')).toBe(true)
-    expect(isTrackedHost('albertowd.github.io')).toBe(true)
+    expect(isTrackedHost('dsv-tool.albertowd.dev')).toBe(true)
   })
 
   test('stays quiet on the development machine', () => {
@@ -111,21 +110,21 @@ describe('installGtag', () => {
 describe('sendPageView', () => {
   test('reports the page on screen', () => {
     installGtag('G-TEST123')
-    serveFrom('https://dsv.albertowd.dev/convert?from=dsv')
+    serveFrom('https://dsv-tool.albertowd.dev/convert?from=dsv')
     document.title = 'DSVTool - DSV Tool'
 
     sendPageView()
 
     expect(commands().at(-1)).toEqual(['event', 'page_view', {
       page_path: '/convert?from=dsv',
-      page_location: 'https://dsv.albertowd.dev/convert?from=dsv',
+      page_location: 'https://dsv-tool.albertowd.dev/convert?from=dsv',
       page_title: 'DSVTool - DSV Tool'
     }])
   })
 
   test('keeps the base path a subpath deployment is served under', () => {
     installGtag('G-TEST123')
-    serveFrom('https://albertowd.github.io/dsv-tool/history')
+    serveFrom('https://example.com/dsv-tool/history')
 
     sendPageView()
 
@@ -134,7 +133,7 @@ describe('sendPageView', () => {
 
   test('leaves out the fragment, which names a place within a page', () => {
     installGtag('G-TEST123')
-    serveFrom('https://dsv.albertowd.dev/convert#footer')
+    serveFrom('https://dsv-tool.albertowd.dev/convert#footer')
 
     sendPageView()
 
@@ -142,7 +141,7 @@ describe('sendPageView', () => {
   })
 
   test('does nothing when the library was never installed', () => {
-    serveFrom('https://dsv.albertowd.dev/')
+    serveFrom('https://dsv-tool.albertowd.dev/')
 
     expect(() => sendPageView()).not.toThrow()
     expect(window.dataLayer).toBeUndefined()
@@ -165,7 +164,7 @@ describe('createPageViewReporter', () => {
     const report = createPageViewReporter()
 
     for (const path of ['/', '/convert', '/history']) {
-      serveFrom(`https://dsv.albertowd.dev${path}`)
+      serveFrom(`https://dsv-tool.albertowd.dev${path}`)
       report(path)
       await nextTick()
     }
@@ -176,7 +175,7 @@ describe('createPageViewReporter', () => {
   test('counts the route landed on once, though it arrives twice', async () => {
     installGtag('G-TEST123')
     const report = createPageViewReporter()
-    serveFrom('https://dsv.albertowd.dev/convert')
+    serveFrom('https://dsv-tool.albertowd.dev/convert')
 
     // Mounting and the router both hand over the page the visit started on.
     report('/convert')
@@ -191,7 +190,7 @@ describe('createPageViewReporter', () => {
     const report = createPageViewReporter()
 
     for (const path of ['/', '/convert', '/']) {
-      serveFrom(`https://dsv.albertowd.dev${path}`)
+      serveFrom(`https://dsv-tool.albertowd.dev${path}`)
       report(path)
       await nextTick()
     }
@@ -202,7 +201,7 @@ describe('createPageViewReporter', () => {
   test('waits a tick, so the title is the incoming page\'s', async () => {
     installGtag('G-TEST123')
     const report = createPageViewReporter()
-    serveFrom('https://dsv.albertowd.dev/history')
+    serveFrom('https://dsv-tool.albertowd.dev/history')
     document.title = 'Previous page'
 
     report('/history')
